@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>WR DIGITAL agora é NEXUS — Plataforma de Marketing Agent & Dashboard</title>
+<title>NEXUS — Marketing Agent & Dashboard</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@400;500&family=Bricolage+Grotesque:wght@300;400;500;600;700&display=swap');
@@ -257,7 +257,7 @@ tbody td{padding:12px 16px;vertical-align:middle;}
 <!-- ══ HOME ══ -->
 <div id="screen-home" class="screen active" style="align-items:center;justify-content:center;flex-direction:column;background:radial-gradient(ellipse at 50% 0%,rgba(200,255,0,.06) 0%,transparent 60%);">
   <div class="home-title">• NEXUS</div>
-  <div class="home-sub">Plataforma completa de Marketing Digital & Gestão de Leads</div>
+  <div class="home-sub">Plataforma completa de Marketing Digital & Gestão de Leads<br>para sua corretora</div>
   <div class="home-cards">
     <div class="home-card" onclick="clickAgent()">
       <div class="home-card-icon">⚡</div>
@@ -272,7 +272,7 @@ tbody td{padding:12px 16px;vertical-align:middle;}
       <div class="home-card-badge">Acesso por cliente</div>
     </div>
   </div>
-  <div class="home-footer">Powered by: WR DGITAL agora é NEXUS</div>
+  <div class="home-footer">NEXUS · Powered by Anthropic Claude · Supabase</div>
 </div>
 
 <!-- ══ AGENTE ══ -->
@@ -570,15 +570,43 @@ async function dashLogin(){
   if(SENHAS[slug]!==senha){errEl.style.display='block';return;}
   const{data:cliente,error}=await sb.from('clientes').select('*').eq('slug',slug).eq('ativo',true).single();
   if(error||!cliente){errEl.textContent='Cliente não encontrado.';errEl.style.display='block';return;}
+  if(!cliente.sheet_id||!cliente.sheets_api_key){
+    errEl.textContent='Planilha não configurada para este cliente. Contate a agência.';
+    errEl.style.display='block';return;
+  }
   currentCliente=cliente;
   document.getElementById('dash-login-screen').style.display='none';
   document.getElementById('dash-main').style.display='block';
   document.getElementById('d-client-name').textContent=cliente.empresa||cliente.nome;
   loadLeads();
 }
+
 async function loadLeads(){
-  const{data}=await sb.from('leads').select('*').eq('cliente_id',currentCliente.id).order('criado_em',{ascending:false});
-  allLeads=data||[];renderAll();showToast('✅ '+allLeads.length+' leads carregados');
+  const syncBtn=document.querySelector('.dash-sync');
+  if(syncBtn){syncBtn.textContent='↻ Carregando...';}
+  try{
+    const range='Leads!A2:G500';
+    const url=`https://sheets.googleapis.com/v4/spreadsheets/${currentCliente.sheet_id}/values/${range}?majorDimension=ROWS&key=${currentCliente.sheets_api_key}`;
+    const res=await fetch(url);
+    const data=await res.json();
+    if(data.error) throw new Error(data.error.message);
+    const rows=data.values||[];
+    allLeads=rows.map((r,i)=>({
+      id:i,
+      nome:r[0]||'—',
+      telefone:r[1]||'—',
+      email:r[2]||'—',
+      empresa:r[3]||'—',
+      criado_em:r[4]||'—',
+      status:r[5]||'Novo Lead',
+      hora_resposta:r[6]||'—'
+    }));
+    renderAll();
+    showToast('✅ '+allLeads.length+' leads carregados');
+  }catch(e){
+    showToast('⚠️ Erro ao carregar planilha: '+e.message);
+  }
+  if(syncBtn){syncBtn.textContent='↻ Atualizar';}
 }
 function dashLogout(){
   currentCliente={};allLeads=[];
@@ -611,7 +639,7 @@ function renderTable(){
   if(!filtered.length){tbody.innerHTML='<tr><td colspan="5"><div class="empty-state"><div class="ei">🔍</div><p>Nenhum lead encontrado</p></div></td></tr>';return;}
   tbody.innerHTML=filtered.map(l=>'<tr onclick="openModal(\''+l.id+'\')"><td class="td-name">'+l.nome+'</td><td class="td-tel">'+(l.telefone||'—')+'</td><td class="td-co">'+(l.empresa||'—')+'</td><td>'+sBadge(l.status)+'</td><td class="td-dt">'+fmtDate(l.criado_em)+'</td></tr>').join('');
 }
-function fmtDate(iso){if(!iso)return'—';try{return new Date(iso).toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',year:'2-digit',hour:'2-digit',minute:'2-digit'});}catch{return iso;}}
+function fmtDate(iso){if(!iso||iso==='—')return'—';try{const d=new Date(iso);if(isNaN(d))return iso;return d.toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',year:'2-digit',hour:'2-digit',minute:'2-digit'});}catch{return iso;}}
 function openModal(id){
   const l=allLeads.find(x=>x.id===id);if(!l)return;
   document.getElementById('modal-body').innerHTML='<div class="mf"><label>Nome</label><div class="val">'+l.nome+'</div></div><div class="mf"><label>Telefone</label><div class="val">'+(l.telefone||'—')+'</div></div><div class="mf"><label>E-mail</label><div class="val">'+(l.email||'—')+'</div></div><div class="mf"><label>Empresa</label><div class="val">'+(l.empresa||'—')+'</div></div><div class="mf"><label>Status</label><div class="val">'+sBadge(l.status)+'</div></div><div class="mf"><label>Entrada</label><div class="val">'+fmtDate(l.criado_em)+'</div></div><div class="m-actions"><a class="btn-wpp" href="https://wa.me/'+((l.telefone||'').replace(/\D/g,''))+'" target="_blank">💬 WhatsApp</a><a class="btn-email" href="mailto:'+(l.email||'')+'">✉️ E-mail</a></div>';
