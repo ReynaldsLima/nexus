@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>WR DIGITAL agora é NEXUS — Plataforma de  Marketing Agent & Dashboard</title>
+<title>NEXUS — Marketing Agent & Dashboard</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@400;500&family=Bricolage+Grotesque:wght@300;400;500;600;700&display=swap');
@@ -274,7 +274,7 @@ tbody td{padding:12px 16px;vertical-align:middle;color:var(--text);}
       <div class="home-card-badge">Acesso por cliente</div>
     </div>
   </div>
-  <div class="home-footer">Powered by WR DIGITAL agora é NEXUS</div>
+  <div class="home-footer">NEXUS · Powered by Anthropic Claude · Supabase</div>
 </div>
 
 <!-- ══ AGENTE ══ -->
@@ -368,7 +368,7 @@ tbody td{padding:12px 16px;vertical-align:middle;color:var(--text);}
           <button class="fc" onclick="setF('fim',this)">Encerrados</button>
         </div>
         <div class="tbl-wrap">
-          <table><thead><tr><th>Nome</th><th>Telefone</th><th>Empresa</th><th>Status</th><th>Entrada</th></tr></thead>
+          <table><thead><tr><th>Nome</th><th>Telefone</th><th>Empresa</th><th>Tipo Seguro</th><th>Status</th><th>Entrada</th></tr></thead>
           <tbody id="d-tbody"></tbody></table>
         </div>
       </div>
@@ -601,7 +601,8 @@ async function loadLeads(){
       empresa:r[3]||'—',
       criado_em:r[4]||'—',
       status:r[5]||'Novo Lead',
-      hora_resposta:r[6]||'—'
+      hora_resposta:r[6]||'—',
+      tipo_seguro:r[7]||'—'
     }));
     renderAll();
     showToast('✅ '+allLeads.length+' leads carregados');
@@ -616,7 +617,14 @@ function dashLogout(){
   document.getElementById('dash-main').style.display='none';
   document.getElementById('d-slug').value='';document.getElementById('d-senha').value='';
 }
-function cat(s){const l=(s||'').toLowerCase();if(l.includes('negoci'))return'negoc';if(l.includes('quente')||l.includes('sim'))return'quente';if(l.includes('novo'))return'novo';return'fim';}
+function cat(s){
+  const l=(s||'').toLowerCase().trim();
+  if(l.includes('negoci')||l.includes('fechamento'))return'negoc';
+  if(l.includes('quente')||l.includes('sim')||l.includes('hot'))return'quente';
+  if(l.includes('novo')||l.includes('new')||l.includes('atendimento')||l===''||l==='—')return'novo';
+  if(l.includes('finaliz')||l.includes('sem resposta')||l.includes('encerr'))return'fim';
+  return'novo';
+}
 function sBadge(s){const c=cat(s);const lbs={negoc:'🔥 Negociando',quente:'✅ Quente',novo:'Novo Lead',fim:'Encerrado'};return'<span class="sbadge s-'+c+'">'+lbs[c]+'</span>';}
 function renderAll(){
   const t=allLeads.length,n=allLeads.filter(l=>cat(l.status)==='novo').length,q=allLeads.filter(l=>cat(l.status)==='quente').length,ng=allLeads.filter(l=>cat(l.status)==='negoc').length,s=allLeads.filter(l=>cat(l.status)==='fim').length;
