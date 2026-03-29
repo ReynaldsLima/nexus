@@ -587,7 +587,7 @@ async function loadLeads(){
   const syncBtn=document.querySelector('.dash-sync');
   if(syncBtn){syncBtn.textContent='↻ Carregando...';}
   try{
-    const range='Leads!A2:G500';
+    const range='Leads!A2:H500';
     const url=`https://sheets.googleapis.com/v4/spreadsheets/${currentCliente.sheet_id}/values/${range}?majorDimension=ROWS&key=${currentCliente.sheets_api_key}`;
     const res=await fetch(url);
     const data=await res.json();
@@ -646,8 +646,8 @@ function renderTable(){
   const filtered=currentFilter==='todos'?allLeads:allLeads.filter(l=>cat(l.status)===currentFilter);
   document.getElementById('d-ct').textContent=filtered.length;
   const tbody=document.getElementById('d-tbody');
-  if(!filtered.length){tbody.innerHTML='<tr><td colspan="5"><div class="empty-state"><div class="ei">🔍</div><p>Nenhum lead encontrado</p></div></td></tr>';return;}
-  tbody.innerHTML=filtered.map(l=>'<tr onclick="openModal(\''+l.id+'\')"><td class="td-name">'+l.nome+'</td><td class="td-tel">'+(l.telefone||'—')+'</td><td class="td-co">'+(l.empresa||'—')+'</td><td>'+sBadge(l.status)+'</td><td class="td-dt">'+fmtDate(l.criado_em)+'</td></tr>').join('');
+  if(!filtered.length){tbody.innerHTML='<tr><td colspan="6"><div class="empty-state"><div class="ei">🔍</div><p>Nenhum lead encontrado</p></div></td></tr>';return;}
+  tbody.innerHTML=filtered.map(l=>'<tr onclick="openModal(\''+l.id+'\')"><td class="td-name">'+l.nome+'</td><td class="td-tel">'+(l.telefone||'—')+'</td><td class="td-co">'+(l.empresa||'—')+'</td><td>'+sBadge(l.status)+'</td><td class="td-co" style="color:var(--accent);font-size:12px;">'+(l.tipo_seguro||'—')+'</td><td class="td-dt">'+(l.criado_em||'—')+'</td></tr>').join('');
 }
 function fmtDate(iso){if(!iso||iso==='—')return'—';try{const d=new Date(iso);if(isNaN(d))return iso;return d.toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',year:'2-digit',hour:'2-digit',minute:'2-digit'});}catch{return iso;}}
 function openModal(id){
