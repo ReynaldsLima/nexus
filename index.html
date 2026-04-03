@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>WR DIGITAL agora é NEXUS — Plataforma de Marketing Agent & Dashboard</title>
+<title>NEXUS — Marketing Agent & Dashboard</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@400;500&family=Bricolage+Grotesque:wght@300;400;500;600;700&display=swap');
@@ -156,8 +156,8 @@ body{background:var(--bg);color:var(--text);font-family:'Bricolage Grotesque',sa
 .kpi.quente .kpi-val{color:#4ade80;}.kpi.quente .kpi-bar{background:#4ade80;}
 .kpi.negoc .kpi-val{color:#fb923c;}.kpi.negoc .kpi-bar{background:#fb923c;}
 .kpi.sem .kpi-val{color:var(--muted);}.kpi.sem .kpi-bar{background:var(--muted);}
-.dash-body{display:grid;grid-template-columns:1fr 280px;gap:18px;}
-.panel{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;}
+.dash-body{display:grid;grid-template-columns:1fr 300px;gap:18px;}
+.panel{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:visible;}
 .panel-hdr{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
 .panel-title{font-size:14px;font-weight:600;display:flex;align-items:center;gap:8px;color:var(--text);}
 .panel-ct{font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);background:var(--surface2);padding:3px 8px;border-radius:100px;}
@@ -165,7 +165,7 @@ body{background:var(--bg);color:var(--text);font-family:'Bricolage Grotesque',sa
 .fc{background:var(--surface);border:1px solid var(--border);border-radius:100px;padding:5px 12px;font-size:12px;cursor:pointer;color:var(--muted);font-family:'Bricolage Grotesque',sans-serif;transition:all .15s;}
 .fc:hover{border-color:var(--accent);color:var(--accent);}
 .fc.on{background:var(--accent);color:#000;border-color:var(--accent);font-weight:600;}
-.tbl-wrap{overflow-x:auto;max-height:340px;overflow-y:auto;}
+.tbl-wrap{overflow-x:auto;overflow-y:visible;}
 .tbl-wrap::-webkit-scrollbar{width:3px;}
 .tbl-wrap::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px;}
 table{width:100%;border-collapse:collapse;font-size:13px;}
@@ -205,6 +205,36 @@ tbody td{padding:12px 16px;vertical-align:middle;color:var(--text);}
 .btn-wpp{background:#25d366;color:#fff;}.btn-email{background:var(--accent);color:#000;}
 .toast{position:fixed;bottom:24px;right:24px;background:var(--surface);border:1px solid var(--border);color:var(--text);padding:11px 18px;border-radius:10px;font-size:13px;z-index:999;transform:translateY(60px);opacity:0;transition:all .28s;box-shadow:0 8px 24px rgba(0,0,0,.3);}
 .toast.show{transform:translateY(0);opacity:1;}
+
+
+.filter-date-wrap{display:flex;align-items:center;gap:8px;margin-left:auto;}
+.filter-date-wrap label{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;white-space:nowrap;}
+.filter-date-input{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:5px 10px;font-size:12px;color:var(--text);font-family:'DM Mono',monospace;outline:none;transition:border-color .2s;cursor:pointer;}
+.filter-date-input:focus{border-color:rgba(200,255,0,.4);}
+.filter-date-input::-webkit-calendar-picker-indicator{filter:invert(1);opacity:.5;cursor:pointer;}
+.clear-date-btn{background:none;border:1px solid var(--border);color:var(--muted);border-radius:6px;padding:4px 8px;font-size:11px;cursor:pointer;font-family:'DM Mono',monospace;transition:all .15s;white-space:nowrap;}
+.clear-date-btn:hover{border-color:rgba(200,255,0,.4);color:var(--accent);}
+
+
+/* ── STATUS DROPDOWN ── */
+.status-wrap{position:relative;display:inline-block;}
+.status-dropdown{
+  position:absolute;top:calc(100% + 6px);left:0;z-index:50;
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:10px;padding:6px;min-width:200px;
+  box-shadow:0 8px 24px rgba(0,0,0,.4);
+  display:none;flex-direction:column;gap:3px;
+}
+.status-wrap.open .status-dropdown{display:flex;}
+.status-opt{
+  padding:8px 12px;border-radius:7px;font-size:12px;
+  cursor:pointer;display:flex;align-items:center;gap:8px;
+  color:var(--text);transition:background .12s;border:none;
+  background:none;text-align:left;font-family:inherit;width:100%;
+}
+.status-opt:hover{background:var(--surface2);}
+.status-opt .dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.status-saving{opacity:.5;pointer-events:none;}
 
 /* ── COPY BUTTON ── */
 .msg-bubble-wrap{position:relative;}
@@ -259,7 +289,7 @@ tbody td{padding:12px 16px;vertical-align:middle;color:var(--text);}
 <!-- ══ HOME ══ -->
 <div id="screen-home" class="screen active" style="align-items:center;justify-content:center;flex-direction:column;background:radial-gradient(ellipse at 50% 0%,rgba(200,255,0,.06) 0%,transparent 60%);">
   <div class="home-title">• NEXUS</div>
-  <div class="home-sub">Plataforma completa de Marketing Digital & Gestão de Leads</div>
+  <div class="home-sub">Plataforma completa de Marketing Digital & Gestão de Leads<br>para sua corretora</div>
   <div class="home-cards">
     <div class="home-card" onclick="clickAgent()">
       <div class="home-card-icon">⚡</div>
@@ -274,7 +304,7 @@ tbody td{padding:12px 16px;vertical-align:middle;color:var(--text);}
       <div class="home-card-badge">Acesso por cliente</div>
     </div>
   </div>
-  <div class="home-footer">Powered by: WR DIGITAL agora é NEXUS </div>
+  <div class="home-footer">NEXUS · Powered by Anthropic Claude · Supabase</div>
 </div>
 
 <!-- ══ AGENTE ══ -->
@@ -366,6 +396,13 @@ tbody td{padding:12px 16px;vertical-align:middle;color:var(--text);}
           <button class="fc" onclick="setF('quente',this)">🔥 Quentes</button>
           <button class="fc" onclick="setF('negoc',this)">Negociando</button>
           <button class="fc" onclick="setF('fim',this)">Encerrados</button>
+          <div class="filter-date-wrap">
+            <label>De</label>
+            <input type="date" class="filter-date-input" id="filter-date-from" onchange="renderTable()" />
+            <label>Até</label>
+            <input type="date" class="filter-date-input" id="filter-date-to" onchange="renderTable()" />
+            <button class="clear-date-btn" onclick="clearDates()">✕ Limpar</button>
+          </div>
         </div>
         <div class="tbl-wrap">
           <table><thead><tr><th>Nome</th><th>Telefone</th><th>Empresa</th><th>Status</th><th>Tipo Seguro</th><th>Entrada</th></tr></thead>
@@ -382,7 +419,6 @@ tbody td{padding:12px 16px;vertical-align:middle;color:var(--text);}
           <hr style="border:none;border-top:1px solid #dddad4;margin:16px 0;">
           <div id="dist-list"></div>
         </div>
-      </div>
     </div>
   </div>
 </div>
@@ -641,9 +677,96 @@ function renderAll(){
   document.getElementById('dist-list').innerHTML=Object.entries(dist).map(([k,v])=>'<div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--border);font-size:12px;color:var(--muted);"><span>'+labels[k]+'</span><span style="font-family:DM Mono,monospace;font-weight:600;color:'+colors[k]+';">'+v+'</span></div>').join('');
   renderTable();
 }
+const STATUS_OPTIONS = [
+  {value:'Novo Lead',        label:'Novo Lead',     dot:'#60a5fa'},
+  {value:'Em Atendimento',   label:'Em Atendimento',dot:'#60a5fa'},
+  {value:'Lead Quente',      label:'Lead Quente',   dot:'#4ade80'},
+  {value:'Em Negociação',    label:'Em Negociação', dot:'#fb923c'},
+  {value:'Sequência Finalizada — Sem Resposta', label:'Encerrado', dot:'#6b6b88'},
+];
+
+function statusWrap(l){
+  const opts = STATUS_OPTIONS.map(o=>
+    `<button class="status-opt" onclick="updateStatus(event,${l.id},'${o.value}')">
+      <span class="dot" style="background:${o.dot};"></span>${o.label}
+    </button>`
+  ).join('');
+  return `<div class="status-wrap" id="sw-${l.id}" onclick="toggleStatusDrop(event,${l.id})">
+    ${sBadge(l.status)}
+    <div class="status-dropdown">${opts}</div>
+  </div>`;
+}
+
+function toggleStatusDrop(e,id){
+  e.stopPropagation();
+  const all=document.querySelectorAll('.status-wrap.open');
+  all.forEach(el=>{ if(el.id!=='sw-'+id) el.classList.remove('open'); });
+  document.getElementById('sw-'+id)?.classList.toggle('open');
+}
+
+document.addEventListener('click',()=>{
+  document.querySelectorAll('.status-wrap.open').forEach(el=>el.classList.remove('open'));
+});
+
+async function updateStatus(e,id,newStatus){
+  e.stopPropagation();
+  const lead = allLeads.find(l=>l.id===id);
+  if(!lead) return;
+  const wrap = document.getElementById('sw-'+id);
+  wrap?.classList.remove('open');
+  wrap?.classList.add('status-saving');
+
+  // Update Google Sheets — find row number (id+2 because row 1 is header, id starts at 0)
+  const rowNum = id + 2;
+  const range = `Leads!F${rowNum}`;
+
+  try {
+    const res = await fetch('/api/sheets', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({
+        sheet_id: currentCliente.sheet_id,
+        api_key: currentCliente.sheets_api_key,
+        range,
+        value: newStatus
+      })
+    });
+    const data = await res.json();
+    if(data.error) throw new Error(data.error);
+
+    // Update local data and re-render
+    lead.status = newStatus;
+    renderAll();
+    showToast('✅ Status atualizado: '+newStatus);
+  } catch(err) {
+    showToast('⚠️ Erro ao atualizar: '+err.message);
+    wrap?.classList.remove('status-saving');
+  }
+}
+
 function setF(f,btn){currentFilter=f;document.querySelectorAll('.fc').forEach(b=>b.classList.remove('on'));btn.classList.add('on');renderTable();}
+function clearDates(){
+  document.getElementById('filter-date-from').value='';
+  document.getElementById('filter-date-to').value='';
+  renderTable();
+}
 function renderTable(){
-  const filtered=currentFilter==='todos'?allLeads:allLeads.filter(l=>cat(l.status)===currentFilter);
+  const dateFrom=document.getElementById('filter-date-from')?.value;
+  const dateTo=document.getElementById('filter-date-to')?.value;
+  let filtered=currentFilter==='todos'?allLeads:allLeads.filter(l=>cat(l.status)===currentFilter);
+  if(dateFrom||dateTo){
+    filtered=filtered.filter(l=>{
+      if(!l.criado_em||l.criado_em==='—') return true;
+      const parts=l.criado_em.split('/');
+      if(parts.length<3) return true;
+      const d=new Date(parts[2]+'-'+parts[1]+'-'+parts[0]);
+      if(isNaN(d)) return true;
+      const ds=d.toISOString().split('T')[0];
+      if(dateFrom && ds < dateFrom) return false;
+      if(dateTo && ds > dateTo) return false;
+      return true;
+    });
+  }
   document.getElementById('d-ct').textContent=filtered.length;
   const tbody=document.getElementById('d-tbody');
   if(!filtered.length){tbody.innerHTML='<tr><td colspan="6"><div class="empty-state"><div class="ei">🔍</div><p>Nenhum lead encontrado</p></div></td></tr>';return;}
